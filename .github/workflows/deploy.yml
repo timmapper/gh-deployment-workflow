@@ -16,7 +16,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: dist
   deploy:
+    needs: build
     environment: 
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}
@@ -24,6 +33,10 @@ jobs:
     steps:
       - name: Set up Pages
         uses: actions/configure-pages@v2
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: .
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v1
